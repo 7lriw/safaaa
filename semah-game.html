@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>سِمة</title>
+  <style>
+    body {
+      font-family: 'Cairo', sans-serif;
+      background-color: #ffffff;
+      color: #000;
+      text-align: center;
+      padding: 20px;
+    }
+    .container {
+      background-color: #f9f9f9;
+      border-radius: 15px;
+      padding: 20px;
+      max-width: 600px;
+      margin: auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    input, select, button {
+      padding: 10px;
+      margin: 10px 0;
+      width: 80%;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+    button {
+      background-color: #006c67;
+      color: white;
+      cursor: pointer;
+    }
+    .hidden {
+      display: none;
+    }
+    .result {
+      margin-top: 20px;
+      font-size: 18px;
+      background-color: #eeeeee;
+      padding: 15px;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>سِمة</h1>
+    <p>اختر منتجك وأدخل السعر، ثم اضغط "تم"</p>
+
+    <select id="product">
+      <option value="كاميرا فورية">كاميرا فورية</option>
+      <option value="آلة طباعة">آلة طباعة يدوية</option>
+      <option value="منتج مكياج">منتج مكياج</option>
+      <option value="كمة عمانية">كمة عمانية</option>
+    </select>
+
+    <input type="number" id="price" placeholder="اكتب السعر بالريال العماني" />
+
+    <button onclick="generateScenario()">تم</button>
+
+    <div class="hidden" id="scenario">
+      <p id="generatedPitch"></p>
+      <p id="generatedCharacter"></p>
+      <p>هل وافق الزبون؟</p>
+      <button onclick="sell(true)">نعم</button>
+      <button onclick="sell(false)">لا</button>
+    </div>
+
+    <div class="result" id="result"></div>
+  </div>
+
+  <!-- مؤثرات صوتية -->
+  <audio id="successSound" src="https://www.fesliyanstudios.com/play-mp3/387" preload="auto"></audio>
+  <audio id="failSound" src="https://www.fesliyanstudios.com/play-mp3/6678" preload="auto"></audio>
+
+  <script>
+    const pitches = [
+      "منتج مصمم خصيصًا لمحبي التميز",
+      "الخيار المثالي لكل شخص عملي",
+      "مستوحى من التراث العماني بلمسة عصرية",
+      "جودة عالية وسعر منافس",
+      "يجعل حياتك أسهل ويعبر عن ذوقك",
+      "صنع بحب لذوي الذوق الرفيع",
+      "يرفع من كفاءتك اليومية",
+      "اختيار النخبة",
+      "خيار ذكي لرواد المستقبل"
+    ];
+
+    const characters = [
+      "شخص يرتدي نظارة",
+      "طالبة تهتم بالمظهر",
+      "شخص يحب التنظيم",
+      "مصوّر هاوٍ",
+      "محاضر جامعي",
+      "شخص كلاسيكي التفكير",
+      "مراهق عصري",
+      "موظف في قسم التسويق",
+      "شخص يهوى التراث العماني"
+    ];
+
+    let selectedPitch = "";
+    let selectedCharacter = "";
+    let selectedProduct = "";
+    let enteredPrice = "";
+
+    function getRandom(arr) {
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function generateScenario() {
+      const product = document.getElementById("product").value;
+      const price = document.getElementById("price").value;
+
+      if (!price) {
+        alert("يرجى إدخال السعر.");
+        return;
+      }
+
+      selectedPitch = getRandom(pitches);
+      selectedCharacter = getRandom(characters);
+      selectedProduct = product;
+      enteredPrice = price;
+
+      document.getElementById("generatedPitch").innerText = `الجملة التسويقية: ${selectedPitch}`;
+      document.getElementById("generatedCharacter").innerText = `الشخصية المستهدفة: ${selectedCharacter}`;
+      document.getElementById("scenario").classList.remove("hidden");
+      document.getElementById("result").innerHTML = "";
+    }
+
+    function sell(agreed) {
+      let resultText = `
+        المنتج: ${selectedProduct}<br>
+        السعر: ${enteredPrice} ريال<br>
+        الجملة التسويقية: "${selectedPitch}"<br>
+        الشخصية: ${selectedCharacter}<br><br>
+      `;
+
+      let analysis = "";
+
+      if (agreed) {
+        document.getElementById("successSound").play();
+        resultText += "تمت عملية البيع بنجاح!<br>";
+
+        if (enteredPrice <= 5) {
+          analysis = "أنت بائع سريع الذكاء، تفضل الانتشار أكثر من الربح، مما يجعلك مؤثرًا على المدى الطويل.";
+        } else if (enteredPrice <= 10) {
+          analysis = "شخصيتك متوازنة وتعرف قيمة المنتج والسوق. أنت بارع في تقديم حلول واقعية ومقنعة.";
+        } else {
+          analysis = "واثق وطموح، تميل للتسويق الفاخر وتؤمن أن الجودة تستحق السعر. استمر وطور أدوات الإقناع.";
+        }
+
+      } else {
+        document.getElementById("failSound").play();
+        resultText += "لم تتم عملية البيع.<br>";
+
+        if (enteredPrice > 10) {
+          analysis = "ربما كان السعر مرتفعًا جدًا لهذه الشخصية. الموازنة بين الطموح واحتياجات العميل ضرورية.";
+        } else {
+          analysis = "تحتاج لتحسين طريقة تقديمك للمنتج أو اختيار أفضل توقيت للمحاولة.";
+        }
+
+        analysis += " تذكر: كل محاولة تقربك من الإتقان، جرب من جديد بثقة!";
+      }
+
+      resultText += `<br><strong>تحليل الشخصية:</strong><br>${analysis}`;
+      document.getElementById("result").innerHTML = resultText;
+      document.getElementById("scenario").classList.add("hidden");
+    }
+  </script>
+</body>
+</html>
